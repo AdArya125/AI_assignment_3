@@ -6,7 +6,7 @@ on:
       basename:
         description: "Basename path (relative inside the version folder), e.g. ./Assets/1_8/25_25_3"
         required: true
-        default: "./Assets/1_8/15_15_3"
+        default: "./Assets/1_2/4_4_1"
 
 jobs:
   run-pipeline:
