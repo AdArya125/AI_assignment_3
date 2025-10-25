@@ -3,11 +3,6 @@ name: Run Pipeline
 on:
   workflow_dispatch:
     inputs:
-      version:
-        description: "Which version folder to use (e.g., Version1, Version2, Version3)"
-        required: true
-        default: "Version3"
-
       basename:
         description: "Basename path (relative inside the version folder), e.g. ./Assets/1_8/25_25_3"
         required: true
@@ -34,6 +29,7 @@ jobs:
       - name: Install Python dependencies (if any)
         working-directory: ${{ github.event.inputs.version }}
         run: |
+          pip install matplotlib
           pip install -r requirements.txt || true
 
       - name: Run pipeline with chosen version and basename
