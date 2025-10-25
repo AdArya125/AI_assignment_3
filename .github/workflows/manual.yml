@@ -1,0 +1,52 @@
+name: Run Pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Which version folder to use (e.g., Version1, Version2, Version3)"
+        required: true
+        default: "Version3"
+
+      basename:
+        description: "Basename path (relative inside the version folder), e.g. ./Assets/1_8/25_25_3"
+        required: true
+        default: "./Assets/1_8/15_15_3"
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install MiniSat
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y minisat
+
+      - name: Make scripts executable
+        working-directory: ${{ github.event.inputs.version }}
+        run: |
+          chmod +x run.sh run1.sh run2.sh
+
+      - name: Install Python dependencies (if any)
+        working-directory: ${{ github.event.inputs.version }}
+        run: |
+          pip install -r requirements.txt || true
+
+      - name: Run pipeline with chosen version and basename
+        working-directory: ${{ github.event.inputs.version }}
+        run: |
+          ./run.sh "${{ github.event.inputs.basename }}"
+
+      - name: Upload output artifacts (optional)
+        uses: actions/upload-artifact@v3
+        with:
+          name: outputs
+          path: |
+            ${{ github.event.inputs.version }}/**/*.satinput
+            ${{ github.event.inputs.version }}/**/*.satoutput
+            ${{ github.event.inputs.version }}/**/*.png
+            ${{ github.event.inputs.version }}/**/*.txt
